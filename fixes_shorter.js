@@ -24,7 +24,8 @@ if (typeof NAMESPACE === 'undefined' || NAMESPACE === null) {
 
    // Private methods
 	var _lookupOrCreateExpensiveResourceById = function(id) {
-		_expensive_resource = _all_ids[id];
+		_expensive_resource = _all_ids[id].res;
+		_all_ids[id].count += 1;
 		
 		if (_expensive_resource == null) {
 			// Just pretend for the sake of this example
@@ -32,7 +33,7 @@ if (typeof NAMESPACE === 'undefined' || NAMESPACE === null) {
 				value: "I'm a very expensive resource associated with ID " + id
 			};
 
-			_all_ids[id] = _expensive_resource;
+			_all_ids[id] = { res : _expensive_resource, count : 1};
 		}
 		
 		return _expensive_resource;
@@ -57,7 +58,8 @@ if (typeof NAMESPACE === 'undefined' || NAMESPACE === null) {
             return _id;
           },
 		  close : function () {
-            delete _all_ids[_id];
+			_all_ids[_id].count -= 1;
+			if (_all_ids[_id].count < 1) delete _all_ids[_id];
             _closed = true;
           }
         };
